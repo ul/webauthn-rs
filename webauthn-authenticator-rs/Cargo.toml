@@ -33,7 +33,8 @@ openssl = "0.10"
 rpassword = "5.0"
 
 # authenticator = { path = "../../../authenticator-rs", optional = true, default-features = false, features = ["crypto_openssl"], package = "authenticator-ctap2-2021" }
-authenticator = { version = "0.3.2-dev.1", optional = true, default-features = false, features = ["crypto_openssl"], package = "authenticator-ctap2-2021" }
+authenticator = { version = "0.4.0-alpha.6", optional = true, default-features = false, features = ["crypto_openssl"] }
+# authenticator = { path = "../../authenticator-rs", optional = true, default-features = false, features = ["crypto_openssl"] }
 
 pcsc = { version = "2", optional = true }
 hidapi = { version = "1.4.2", optional = true }
@@ -44,4 +45,5 @@ serde = { version = "1.0", features = ["derive"] }
 webauthn-rs-core = { path = "../webauthn-rs-core" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "std", "fmt"] }
 base64 = "0.13"
+clap = { version = "4.0.29", features = ["derive"] }
 

@@ -49,19 +49,19 @@ impl U2FHid {
         let _thread_handle = thread::spawn(move || loop {
             match status_rx.recv() {
                 Ok(StatusUpdate::DeviceAvailable { dev_info }) => {
-                    println!("STATUS: device available: {}", dev_info)
+                    info!("STATUS: device available: {}", dev_info)
                 }
                 Ok(StatusUpdate::DeviceUnavailable { dev_info }) => {
-                    println!("STATUS: device unavailable: {}", dev_info)
+                    info!("STATUS: device unavailable: {}", dev_info)
                 }
                 Ok(StatusUpdate::Success { dev_info }) => {
-                    println!("STATUS: success using device: {}", dev_info);
+                    info!("STATUS: success using device: {}", dev_info);
                 }
                 Ok(StatusUpdate::SelectDeviceNotice) => {
-                    println!("STATUS: Please select a device by touching one of them.");
+                    info!("STATUS: Please select a device by touching one of them.");
                 }
                 Ok(StatusUpdate::DeviceSelected(dev_info)) => {
-                    println!("STATUS: Continuing with device: {}", dev_info);
+                    info!("STATUS: Continuing with device: {}", dev_info);
                 }
                 Ok(StatusUpdate::PinError(error, sender)) => match error {
                     PinError::PinRequired => {
@@ -96,7 +96,7 @@ impl U2FHid {
                     }
                 },
                 Err(RecvError) => {
-                    println!("STATUS: end");
+                    info!("STATUS: end");
                     return;
                 }
             }
@@ -211,7 +211,7 @@ impl AuthenticatorBackend for U2FHid {
             .map(Base64UrlSafeData)
             .map_err(|_| WebauthnCError::Cbor)?;
 
-        let client_data_json = serde_json::to_vec(&client_data)
+        let client_data_json = serde_json::to_vec(&client_data.client_data)
             .map(Base64UrlSafeData)
             .map_err(|_| WebauthnCError::Json)?;
 
@@ -253,7 +253,7 @@ impl AuthenticatorBackend for U2FHid {
 
         let ctap_args = SignArgsCtap2 {
             challenge: options.challenge.0.clone(),
-            origin: origin.to_string(),
+            origin: origin.to_string().trim_end_matches('/').to_string(),
             relying_party_id: options.rp_id,
             allow_list,
             options: GetAssertionOptions::default(),
@@ -321,7 +321,7 @@ impl AuthenticatorBackend for U2FHid {
             .map(Base64UrlSafeData)
             .map_err(|_| WebauthnCError::Cbor)?;
 
-        let client_data_json = serde_json::to_vec(&client_data)
+        let client_data_json = serde_json::to_vec(&client_data.client_data)
             .map(Base64UrlSafeData)
             .map_err(|_| WebauthnCError::Json)?;
 
